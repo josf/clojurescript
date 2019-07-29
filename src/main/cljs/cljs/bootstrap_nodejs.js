@@ -117,6 +117,8 @@ function nodeGlobalRequire(file, target) {
         global.exports = undefined;
     }
 
+    console.log("file: ", file);
+    console.log("target:", target);
     vm.runInThisContext.call(global, fs.readFileSync(file), file);
 
     if(target !== "nodejs") {
