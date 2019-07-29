@@ -323,9 +323,12 @@
     (str ty)))
 
 ;; INTERNAL - do not use, only for Node.js
-(defn load-file [file]
-  (when-not js/COMPILED
-    (cljs.core/load-file* file)))
+(defn load-file
+  ([file]
+   (load-file file nil))
+  ([file target]
+   (when-not js/COMPILED
+     (cljs.core/load-file* file target))))
 
 (if (and (exists? js/Symbol)
          (identical? (goog/typeOf js/Symbol) "function"))

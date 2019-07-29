@@ -1288,6 +1288,8 @@
                          str
                          escape-string
                          wrap-in-double-quotes)
+                     (when (ana/node-target-dep? lib)
+                       ", \"nodejs\"")
                      ");"))
                  (emitln "goog.require('" (munge lib) "');")))]
             :cljs

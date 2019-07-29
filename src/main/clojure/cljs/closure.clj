@@ -1585,8 +1585,12 @@
                     (= :nodejs (:target opts))
                     (filter (complement ana/node-module-dep?))))
          "]"
-         (if (deps/-foreign? input) ", {'foreign-lib': true}")
-         ");\n")))
+         (when (deps/-foreign? input)
+           (str ", {'foreign-lib': true"
+             (when (contains? #{:node :nodejs} (:target input))
+               ", 'target': 'nodejs'")
+             "}"))
+      ");\n")))
 
 (defn deps-file
   "Return a deps file string for a sequence of inputs."

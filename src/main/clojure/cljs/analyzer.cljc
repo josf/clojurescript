@@ -2557,6 +2557,14 @@
       foreign
       false)))
 
+(defn node-target-dep?
+  #?(:cljs {:tag boolean})
+  [dep]
+  (let [js-index (:js-dependency-index @env/*compiler*)]
+    (if-some [[_ {:keys [target]}] (find js-index (name dep))]
+      (contains? #{:nodejs :node} target)
+      false)))
+
 (defn analyze-deps
   "Given a lib, a namespace, deps, its dependencies, env, an analysis environment
    and opts, compiler options - analyze all of the dependencies. Required to

@@ -83,7 +83,10 @@ global.CLOSURE_IMPORT_SCRIPT = function(src, opt_sourceText) {
             flags = goog.dependencies_.loadFlags[src];
         }
         if (flags && flags["foreign-lib"]) {
-            nodeGlobalRequire(path.resolve(__dirname, "..", src));
+            nodeGlobalRequire(
+                path.resolve(__dirname, "..", src),
+                flags["target"]
+            );
         } else {
             require(path.join(".", "..", src));
         }
@@ -107,13 +110,19 @@ global.CLOSURE_LOAD_FILE_SYNC = function(src) {
 
 
 // Declared here so it can be used to require base.js
-function nodeGlobalRequire(file) {
-    var _module = global.module, _exports = global.exports;
-    global.module = undefined;
-    global.exports = undefined;
+function nodeGlobalRequire(file, target) {
+    if(target !== "nodejs") {
+        var _module = global.module, _exports = global.exports;
+        global.module = undefined;
+        global.exports = undefined;
+    }
+
     vm.runInThisContext.call(global, fs.readFileSync(file), file);
-    global.exports = _exports;
-    global.module = _module;
+
+    if(target !== "nodejs") {
+        global.exports = _exports;
+        global.module = _module;
+    }
 }
 
 

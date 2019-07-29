@@ -3057,8 +3057,11 @@
   `(~'ns* ~(cons :refer-clojure args)))
 
 ;; INTERNAL - do not use, only for Node.js
-(core/defmacro load-file* [f]
-  `(goog/nodeGlobalRequire ~f))
+(core/defmacro load-file*
+  ([f]
+   `(goog/nodeGlobalRequire ~f))
+  ([f target]
+   `(goog/nodeGlobalRequire ~f ~target)))
 
 (core/defmacro macroexpand-1
   "If form represents a macro form, returns its expansion,

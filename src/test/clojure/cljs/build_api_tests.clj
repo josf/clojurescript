@@ -445,6 +445,38 @@
                                      (slurp (io/file out "emit_global_requires_test/core.js")))))))
       (is (empty? @ws)))))
 
+(deftest test-foreign-lib-node-target-cljs-3147
+  (testing "if foreign library has :target set to :nodejs, we should not emit nodeGlobalRequire"
+    (let [out (.getPath (io/file "test-out" #_(test/tmp-dir) "emit-node-requires-test-out"))
+          {:keys [inputs opts]} {:inputs (str (io/file "src" "test" "cljs_build"))
+                                 :opts {:main 'emit-node-requires-test.core
+                                        :output-dir out
+                                        :target :nodejs
+                                        :optimizations :none
+                                        :foreign-libs [{:file "src/test/cljs_build/thirdparty/add.js"
+                                                        :target :nodejs
+                                                        :provides ["react"]
+                                                        :global-exports '{react React}}
+                                                       {:file "src/test/cljs_build/thirdparty/add.js"
+                                                        :target :nodejs
+                                                        :provides ["react-dom"]
+                                                        :requires ["react"]
+                                                        :global-exports '{react-dom ReactDOM}}
+                                                       {:file "src/test/cljs_build/thirdparty/add.js"
+                                                        :target :nodejs
+                                                        :provides ["react-dom/server"]
+                                                        :requires ["react-dom"]
+                                                        :global-exports '{react-dom/server ReactDOMServer}}]}}
+          cenv (env/default-compiler-env)]
+      (test/delete-out-files out)
+      (build/build (build/inputs (io/file inputs "emit_node_requires_test/core.cljs")) opts cenv)
+      (is (string/includes?
+            (slurp (io/file out "emit_node_requires_test/core.js"))
+            "nodejs"))
+      (is (string/includes?
+            (slurp (io/file out "cljs_deps.js"))
+            "nodejs")))))
+
 (deftest test-data-readers
   (let [out (.getPath (io/file (test/tmp-dir) "data-readers-test-out"))
         {:keys [inputs opts]} {:inputs (str (io/file "src" "test" "cljs"))
