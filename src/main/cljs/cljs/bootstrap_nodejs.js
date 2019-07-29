@@ -111,20 +111,24 @@ global.CLOSURE_LOAD_FILE_SYNC = function(src) {
 
 // Declared here so it can be used to require base.js
 function nodeGlobalRequire(file, target) {
+    /*
     if(target !== "nodejs") {
         var _module = global.module, _exports = global.exports;
         global.module = undefined;
         global.exports = undefined;
     }
+    */
 
     console.log("file: ", file);
     console.log("target:", target);
     vm.runInThisContext.call(global, fs.readFileSync(file), file);
 
+    /*
     if(target !== "nodejs") {
         global.exports = _exports;
         global.module = _module;
     }
+    */
 }
 
 
